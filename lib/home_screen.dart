@@ -1,4 +1,7 @@
+import 'package:api_testing/api_helper.dart';
 import 'package:flutter/material.dart';
+
+import 'model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,9 +11,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _designationController = TextEditingController();
-  final List<Employee> _employees = [];
+  List<Employee> _employees = [];
+  bool isLoading = false;
 
-// bottom sheet code
+// bottom sheet for add employee details
 //
 //
 
@@ -48,16 +52,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    String name = _nameController.text;
-                    String designation = _designationController.text;
-                    setState(() {
-                      _employees.add(Employee(name, designation));
-                    });
+                  onPressed: () async {
+                    addEmployeedata(
+                        name: _nameController.text,
+                        designation: _designationController.text);
+
+                    _nameController.clear();
+                    _designationController.clear();
                     Navigator.pop(context);
+                    await fetchdata();
                   },
                   child: Text('Save'),
                 ),
+                SizedBox(
+                  height: 20,
+                )
               ],
             ),
           ),
@@ -66,42 +75,228 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-// HomePage code
+  // bottom sheet for update employee details
 //
-//
+
+  void _updateBottomSheet({required String id}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Employee Name',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: _designationController,
+                    decoration: InputDecoration(
+                      labelText: 'Designation',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    patchEmployeedata(
+                        id: id.toString(),
+                        name: _nameController.text,
+                        designation: _designationController.text);
+                    fetchdata();
+                    Navigator.pop(context);
+                  },
+                  child: Text('Update data'),
+                ),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+// function for get employee
+
+  Future<void> fetchdata() async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await ApiHelper.get(endpoint: "api/addemployee/");
+
+    if (response != null) {
+      final employeeRes = EmployeeModel.fromJson(response);
+      _employees =
+          employeeRes.employees != null || employeeRes.employees.isNotEmpty
+              ? employeeRes.employees
+              : [];
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+// function for add employee
+
+  Future<void> addEmployeedata(
+      {required String name, required String designation}) async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await ApiHelper.post(
+        endpoint: "api/addemployee/",
+        data: {"employee_name": name, "designation": designation});
+
+    if (response != null) {
+      setState(() {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Sccessfully added")));
+      });
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to add data")));
+
+      throw Exception('Failed to load album');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+// function for update employee
+
+  Future<void> patchEmployeedata(
+      {required String id,
+      required String name,
+      required String designation}) async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await ApiHelper.put(
+        endpoint: "api/addemployee/$id/",
+        data: {"employee_name": name, "designation": designation});
+
+    if (response != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Sccessfully Updated")));
+    } else {
+      print(response);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to update")));
+
+      throw Exception('Failed to load album');
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // code for delete employee
+
+  Future<void> deleteEmployee({
+    required String id,
+  }) async {
+    setState(() {
+      isLoading = true;
+    });
+    final response = await ApiHelper.delete(
+      endpoint: "api/addemployee/$id/",
+    );
+
+    if (response != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Sccessfully deleted")));
+    } else {
+      print(response);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to delete")));
+    }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  // function for update employee
+
+  @override
+  void initState() {
+    fetchdata();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Employee Details'),
       ),
-      body: _employees.isEmpty
+      body: (_employees.isEmpty || _employees.length == 0)
           ? Center(
               child: Text(
                 'No employees added yet.',
                 style: TextStyle(fontSize: 16),
               ),
             )
-          : ListView.builder(
-              itemCount: _employees.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_employees[index].name),
-                  subtitle: Text(_employees[index].designation),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(icon: Icon(Icons.edit), onPressed: () {}),
-                      IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          onPressed: () {}),
-                    ],
-                  ),
-                );
+          : RefreshIndicator(
+              onRefresh: () async {
+                fetchdata();
               },
+              child: isLoading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      itemCount: _employees.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(_employees[index].employeeName),
+                          subtitle: Text(_employees[index].designation),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    //to update values inside text controllers to show values
+
+                                    _nameController.text =
+                                        _employees[index].employeeName;
+                                    _designationController.text =
+                                        _employees[index].designation;
+                                    _updateBottomSheet(
+                                        id: _employees[index].id);
+                                  }),
+                              IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () {
+                                    deleteEmployee(
+                                      id: _employees[index].id,
+                                    );
+                                    fetchdata();
+                                  }),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showBottomSheet,
@@ -110,11 +305,4 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-
-class Employee {
-  final String name;
-  final String designation;
-
-  Employee(this.name, this.designation);
 }
