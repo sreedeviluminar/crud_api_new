@@ -68,8 +68,11 @@ class ApiHelper {
 //
 //
   static dynamic _handleResponse(http.Response response) {
+    print(response.body);
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
       // Success
+      print(response.body);
       return jsonDecode(response.body);
     } else {
       // Error

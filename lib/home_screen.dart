@@ -60,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     _nameController.clear();
                     _designationController.clear();
                     Navigator.pop(context);
-                    await fetchdata();
                   },
                   child: Text('Save'),
                 ),
@@ -117,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         id: id.toString(),
                         name: _nameController.text,
                         designation: _designationController.text);
-                    fetchdata();
+
                     Navigator.pop(context);
                   },
                   child: Text('Update data'),
@@ -144,9 +143,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response != null) {
       final employeeRes = EmployeeModel.fromJson(response);
       _employees =
-          employeeRes.employees != null || employeeRes.employees.isNotEmpty
-              ? employeeRes.employees
-              : [];
+          employeeRes.employees.isNotEmpty ? employeeRes.employees : [];
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to fetch employee list")));
     }
     setState(() {
       isLoading = false;
@@ -169,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Sccessfully added")));
       });
+      await fetchdata();
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Failed to add data")));
@@ -196,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response != null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Sccessfully Updated")));
+      await fetchdata();
     } else {
       print(response);
       ScaffoldMessenger.of(context)
@@ -223,6 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response != null) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Sccessfully deleted")));
+      await fetchdata();
     } else {
       print(response);
       ScaffoldMessenger.of(context)
@@ -290,7 +293,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     deleteEmployee(
                                       id: _employees[index].id,
                                     );
-                                    fetchdata();
                                   }),
                             ],
                           ),
