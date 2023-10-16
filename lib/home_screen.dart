@@ -16,8 +16,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // bottom sheet for add employee details
 //
-//
-
   void _showBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -155,8 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 // function for add employee
 
-  Future<void> addEmployeedata(
-      {required String name, required String designation}) async {
+  Future<void> addEmployeedata({required String name, required String designation}) async {
     setState(() {
       isLoading = true;
     });

@@ -20,10 +20,8 @@ class EmployeeModel {
     required this.totalResults,
   });
 
-  factory EmployeeModel.fromJson(Map<String, dynamic> json) => EmployeeModel(
-        status: json["status"],
-        employees: List<Employee>.from(
-            json["employees"].map((x) => Employee.fromJson(x))),
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) => EmployeeModel(status: json["status"],
+        employees: List<Employee>.from(json["employees"].map((x) => Employee.fromJson(x))),
         totalResults: json["totalResults"],
       );
 

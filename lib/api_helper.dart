@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiHelper {
-  static const String baseUrl =
-      'http://13.233.127.215:8000/'; // Replace with your API base URL
+  static const String baseUrl = 'http://3.92.68.133:8000/'; // Replace with your API base URL
 
   static Future<dynamic> get({required String endpoint}) async {
-    final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
+    //connecting baseurl+endpoint
+    final response = await http.get(Uri.parse('$baseUrl$endpoint'));
     return _handleResponse(response);
   }
-
 //
 //
 //
@@ -17,7 +16,7 @@ class ApiHelper {
 //
   static Future<dynamic> post({required String endpoint, Map? data}) async {
     final response = await http.post(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse('$baseUrl$endpoint'),
       body: jsonEncode(data),
       headers: {'Content-Type': 'application/json'},
     );
@@ -31,7 +30,7 @@ class ApiHelper {
 //
   static Future<dynamic> patch({required String endpoint, dynamic data}) async {
     final response = await http.patch(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse('$baseUrl$endpoint'),
       body: jsonEncode(data),
       headers: {'Content-Type': 'application/json'},
     );
@@ -45,7 +44,7 @@ class ApiHelper {
 //
   static Future<dynamic> put({required String endpoint, Map? data}) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse('$baseUrl$endpoint'),
       body: jsonEncode(data),
       headers: {'Content-Type': 'application/json'},
     );
@@ -58,7 +57,7 @@ class ApiHelper {
 //
 //
   static Future<dynamic> delete({required endpoint}) async {
-    final response = await http.delete(Uri.parse('$baseUrl/$endpoint'));
+    final response = await http.delete(Uri.parse('$baseUrl$endpoint'));
     return _handleResponse(response);
   }
 
