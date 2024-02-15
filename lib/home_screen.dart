@@ -136,12 +136,12 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = true;
     });
-    final response = await ApiHelper.get(endpoint: "api/addemployee/");
+    final response = await ApiHelper.get(endpoint: "employees/");
 
     if (response != null) {
       final employeeRes = EmployeeModel.fromJson(response);
       _employees =
-          employeeRes.employees.isNotEmpty ? employeeRes.employees : [];
+           employeeRes.employeesList ?? [];
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to fetch employee list")));
@@ -158,8 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
     final response = await ApiHelper.post(
-        endpoint: "api/addemployee/",
-        data: {"employee_name": name, "designation": designation});
+        endpoint: "employees/create/",
+        data: {'name': name, "role": designation});
 
     if (response != null) {
       setState(() {
@@ -188,8 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
     final response = await ApiHelper.put(
-        endpoint: "api/addemployee/$id/",
-        data: {"employee_name": name, "designation": designation});
+        endpoint: "employees/update/$id/",
+        data: {"name": name, "role": designation});
 
     if (response != null) {
       ScaffoldMessenger.of(context)
@@ -216,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoading = true;
     });
     final response = await ApiHelper.delete(
-      endpoint: "api/addemployee/$id/",
+      endpoint: "/employees/$id/",
     );
 
     if (response != null) {
@@ -264,8 +264,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemCount: _employees.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(_employees[index].employeeName),
-                          subtitle: Text(_employees[index].designation),
+                          title: Text(_employees[index].name ??""),
+                          subtitle: Text(_employees[index].role ??""
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -275,11 +276,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                     //to update values inside text controllers to show values
 
                                     _nameController.text =
-                                        _employees[index].employeeName;
+                                        _employees[index].name ??"";
                                     _designationController.text =
-                                        _employees[index].designation;
+                                        _employees[index].role ??"";
                                     _updateBottomSheet(
-                                        id: _employees[index].id);
+                                        id: _employees[index].id.toString());
                                   }),
                               IconButton(
                                   icon: Icon(
@@ -288,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   onPressed: () {
                                     deleteEmployee(
-                                      id: _employees[index].id,
+                                      id: _employees[index].id.toString(),
                                     );
                                   }),
                             ],

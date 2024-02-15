@@ -1,57 +1,48 @@
-// To parse this JSON data, do
-//
-//     final employeeModel = employeeModelFromJson(jsonString);
-
-import 'dart:convert';
-
-EmployeeModel employeeModelFromJson(String str) =>
-    EmployeeModel.fromJson(json.decode(str));
-
-String employeeModelToJson(EmployeeModel data) => json.encode(data.toJson());
 
 class EmployeeModel {
-  String status;
-  List<Employee> employees;
-  int totalResults;
+  int? status;
+  String? message;
+  List<Employee>? employeesList;
 
   EmployeeModel({
-    required this.status,
-    required this.employees,
-    required this.totalResults,
+    this.status,
+    this.message,
+    this.employeesList,
   });
 
-  factory EmployeeModel.fromJson(Map<String, dynamic> json) => EmployeeModel(status: json["status"],
-        employees: List<Employee>.from(json["employees"].map((x) => Employee.fromJson(x))),
-        totalResults: json["totalResults"],
-      );
+  factory EmployeeModel.fromJson(Map<String, dynamic> json) => EmployeeModel(
+    status: json["status"],
+    message: json["message"],
+    employeesList: json["data"] == null ? [] : List<Employee>.from(json["data"]!.map((x) => Employee.fromJson(x))),
+  );
 
   Map<String, dynamic> toJson() => {
-        "status": status,
-        "employees": List<dynamic>.from(employees.map((x) => x.toJson())),
-        "totalResults": totalResults,
-      };
+    "status": status,
+    "message": message,
+    "data": employeesList == null ? [] : List<dynamic>.from(employeesList!.map((x) => x.toJson())),
+  };
 }
 
 class Employee {
-  String id;
-  String employeeName;
-  String designation;
+  int? id;
+  String? name;
+  String? role;
 
   Employee({
-    required this.id,
-    required this.employeeName,
-    required this.designation,
+    this.id,
+    this.name,
+    this.role,
   });
 
   factory Employee.fromJson(Map<String, dynamic> json) => Employee(
-        id: json["id"],
-        employeeName: json["employee_name"],
-        designation: json["designation"],
-      );
+    id: json["id"],
+    name: json["name"],
+    role: json["role"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "employee_name": employeeName,
-        "designation": designation,
-      };
+    "id": id,
+    "name": name,
+    "role": role,
+  };
 }
