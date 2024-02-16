@@ -1,4 +1,3 @@
-
 class EmployeeModel {
   int? status;
   String? message;
