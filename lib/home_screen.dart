@@ -131,7 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 // function for get employee
-
   Future<void> fetchdata() async {
     setState(() {
       isLoading = true;
@@ -140,8 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (response != null) {
       final employeeRes = EmployeeModel.fromJson(response);
-      _employees =
-           employeeRes.employeesList ?? [];
+      _employees = employeeRes.employeesList ?? [];
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to fetch employee list")));
@@ -163,8 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (response != null) {
       setState(() {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Sccessfully added")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sccessfully added")));
       });
       await fetchdata();
     } else {
@@ -234,7 +231,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // function for update employee
-
   @override
   void initState() {
     fetchdata();

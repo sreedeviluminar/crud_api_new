@@ -1,9 +1,9 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 
 class ApiHelper {
-  static const String baseUrl = 'http://54.210.15.138/'; // Replace with your API base URL
+  static const String baseUrl = 'http://3.93.46.140/'; // Replace with your API base URL
+
   static Future<dynamic> get({required String endpoint}) async {
     //connecting baseurl+endpoint
     final response = await http.get(Uri.parse('$baseUrl$endpoint'));
@@ -51,7 +51,6 @@ class ApiHelper {
 //
   static dynamic _handleResponse(http.Response response) {
     print(response.body);
-
     if (response.statusCode >= 200 && response.statusCode < 300) {
       // Success
       print(response.body);
