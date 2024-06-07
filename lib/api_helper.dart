@@ -68,3 +68,12 @@ class ApiHelper {
         as the body, which obviously throws an error.So to solve this issue you need to
         change (or encode) your Map<String, String> data to JSON data.Best way to do this
         is to use jsonEncode function.*/
+/*jsonEncode: Part of the dart:convert library,
+ it converts Dart objects (like maps or lists) into JSON strings.
+ JSON (JavaScript Object Notation) is a lightweight data interchange format.
+ */
+
+
+/*Headers: Key-value pairs sent along with the HTTP request to provide additional information.
+The Content-Type header tells the server the format of the data being sent.
+ */
