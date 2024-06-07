@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (response != null) {
       setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sccessfully added")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Successfully added")));
       });
       await fetchdata();
     } else {
